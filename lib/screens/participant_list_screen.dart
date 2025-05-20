@@ -5,115 +5,16 @@ import 'package:provider/provider.dart';
 import '../models/item_model.dart';
 import '../providers/item_provider.dart';
 import 'add_participant_screen.dart';
-import '../widgets/race_navigation_bar.dart';
 
-class ParticipantListScreen extends StatefulWidget {
+class ParticipantListScreen extends StatelessWidget {
   const ParticipantListScreen({Key? key}) : super(key: key);
 
   @override
-  State<ParticipantListScreen> createState() => _ParticipantListScreenState();
-}
-
-class _ParticipantListScreenState extends State<ParticipantListScreen> {
-  int _selectedTabIndex = 0;
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Race',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      bottomNavigationBar: RaceNavigationBar(
-        selectedIndex: _selectedTabIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _selectedTabIndex = index;
-          });
-        },
-      ),
-      body: Column(
-        children: [
-          // Tab bar
-          Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Colors.grey, width: 0.5),
-              ),
-            ),
-            child: Row(
-              children: [
-                _buildTabButton(0, 'Participant list'),
-                _buildTabButton(1, 'Add Participant'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Tab content
-          Expanded(
-            child: _selectedTabIndex == 0
-                ? _buildParticipantList()
-                                    : _selectedTabIndex == 1
-                    ? AddParticipantScreen(
-                        onSubmit: () {
-                          // Switch back to participant list tab after adding
-                          setState(() {
-                            _selectedTabIndex = 0;
-                          });
-                        },
-                      )
-                    : const Center(child: Text('Error: Invalid tab')),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabButton(int index, String text) {
-    bool isSelected = _selectedTabIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedTabIndex = index;
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: isSelected ? const Color(0xFF5E5CE6) : Colors.transparent,
-                width: 2.0,
-              ),
-            ),
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFF5E5CE6) : Colors.black,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildParticipantList() {
     return Consumer<ParticipantProvider>(
       builder: (context, participantProvider, child) {
         final participants = participantProvider.participants;
-        
+
         return Column(
           children: [
             // Header
@@ -123,10 +24,10 @@ class _ParticipantListScreenState extends State<ParticipantListScreen> {
                   bottom: BorderSide(color: Colors.grey, width: 0.5),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
-                  children: const [
+                  children: [
                     Expanded(
                       flex: 1,
                       child: Padding(
@@ -171,7 +72,7 @@ class _ParticipantListScreenState extends State<ParticipantListScreen> {
                 ),
               ),
             ),
-            
+
             // List of participants
             Expanded(
               child: participants.isEmpty

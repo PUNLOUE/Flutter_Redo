@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 // import 'package:race_app/screens/participant_list_screen.dart';
 
 import 'providers/item_provider.dart';
-import 'screens/participant_list_screen.dart';
+import 'screens/participant_management_screen.dart';
 
 void main() {
   runApp(const RaceApp());
@@ -29,7 +29,7 @@ class RaceApp extends StatelessWidget {
             secondary: const Color(0xFF5E5CE6),
           ),
         ),
-        home: const ParticipantListScreen(),
+        home: const ParticipantManagementScreen(),
       ),
     );
   }
