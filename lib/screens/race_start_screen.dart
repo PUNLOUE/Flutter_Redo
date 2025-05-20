@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/item_model.dart';
 import '../providers/item_provider.dart';
@@ -14,6 +14,48 @@ class _RaceStartScreenState extends State<RaceStartScreen> {
   bool isStarted = false;
   int selectedSegment = 0; // Default: 'Swim' selected
   int? selectedBibIndex; // To track the selected BIB index
+  final Duration mockMainTime = const Duration(seconds: 0); // Mock main timer
+  final Map<String, Duration> participantTimes = {}; // Track finish times
+  final Map<String, Duration> participantStartTimes = {
+    // Mock start times (optional, can be removed if not needed)
+    '104': const Duration(seconds: 0),
+  }; // Track start times for active participants
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void selectParticipant(String bib, int index) {
+    setState(() {
+      selectedBibIndex = index;
+    });
+  }
+
+  void untrackParticipant() {
+    setState(() {
+      selectedBibIndex = null;
+    });
+  }
+
+  void finishParticipant(String bib) {
+    if (isStarted && selectedBibIndex != null) {
+      setState(() {
+        final startTime = participantStartTimes[bib] ?? const Duration(seconds: 0);
+        participantTimes[bib] = const Duration(seconds: 1); // Mock finish time
+        participantStartTimes.remove(bib); // Clear start time
+        selectedBibIndex = null; // Deselect after finishing
+      });
+    }
+  }
+
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$hours:$minutes:$seconds';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +78,14 @@ class _RaceStartScreenState extends State<RaceStartScreen> {
                 });
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isStarted
-                    ? const Color(0xFF5E5CE6)
-                    : const Color(0xFF5E5CE6),
+                backgroundColor: const Color(0xFF5E5CE6),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: Text(
-                isStarted ? '00:00:00' : 'Start',
+                isStarted ? '00:00:00' : 'Start', // Static mock time
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -58,6 +98,7 @@ class _RaceStartScreenState extends State<RaceStartScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(segments.length, (index) {
               final isSelected = index == selectedSegment;
               return Expanded(
@@ -98,16 +139,19 @@ class _RaceStartScreenState extends State<RaceStartScreen> {
             }),
           ),
         ),
-        // "Not Start" label
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+        // Status Label
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Not Start',
-              style: TextStyle(
+              isStarted && selectedBibIndex != null
+                  ? 'In Progress'
+                  : (isStarted ? 'Started' : 'Not Start'),
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
+                color: Colors.green,
               ),
             ),
           ),
@@ -127,17 +171,19 @@ class _RaceStartScreenState extends State<RaceStartScreen> {
               itemBuilder: (context, index) {
                 final participant = participants[index];
                 final isSelected = selectedBibIndex == index;
+                final hasFinished = participantTimes.containsKey(participant.bib);
+                final startTime = participantStartTimes[participant.bib] ?? const Duration(seconds: 0);
+                final elapsedTime = isSelected ? const Duration(seconds: 1) : const Duration(seconds: 0); // Mock elapsed time
+
                 return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedBibIndex = index;
-                    });
-                  },
+                  onTap: hasFinished
+                      ? null
+                      : () => selectParticipant(participant.bib, index),
                   child: Container(
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF5E5CE6)
-                          : Colors.grey.shade100,
+                          : (hasFinished ? Colors.grey.shade300 : Colors.white),
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -147,15 +193,36 @@ class _RaceStartScreenState extends State<RaceStartScreen> {
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        participant.bib,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: isSelected ? Colors.white : Colors.black,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'BID ${participant.bib}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: isSelected || hasFinished
+                                ? Colors.white
+                                : Colors.black,
+                          ),
                         ),
-                      ),
+                        if (isSelected && isStarted)
+                          Text(
+                            formatDuration(elapsedTime), // Mock "00:00:01"
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.yellow,
+                            ),
+                          ),
+                        if (hasFinished)
+                          Text(
+                            formatDuration(participantTimes[participant.bib]!),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 );
@@ -163,6 +230,58 @@ class _RaceStartScreenState extends State<RaceStartScreen> {
             ),
           ),
         ),
+        // Action Buttons (Untrack and Finish)
+        if (selectedBibIndex != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Action',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: untrackParticipant,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFF5E5CE6),
+                          side: const BorderSide(color: Color(0xFF5E5CE6)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          minimumSize: const Size(0, 50),
+                        ),
+                        child: const Text('Untrack'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final bib = participants[selectedBibIndex!].bib;
+                          finishParticipant(bib);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF5E5CE6),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          minimumSize: const Size(0, 50),
+                        ),
+                        child: const Text('Finish'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
