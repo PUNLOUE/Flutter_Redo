@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/item_model.dart';
 import '../providers/item_provider.dart';
 import 'add_participant_screen.dart';
+import '../widgets/race_navigation_bar.dart';
 
 class ParticipantListScreen extends StatefulWidget {
   const ParticipantListScreen({Key? key}) : super(key: key);
@@ -29,26 +30,13 @@ class _ParticipantListScreenState extends State<ParticipantListScreen> {
         elevation: 0,
         centerTitle: true,
       ),
-      bottomNavigationBar: NavigationBar(
-        // You may need to define labelBehavior and currentPageIndex as class variables
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      bottomNavigationBar: RaceNavigationBar(
         selectedIndex: _selectedTabIndex,
         onDestinationSelected: (int index) {
           setState(() {
             _selectedTabIndex = index;
           });
         },
-        destinations: const <Widget>[
-          NavigationDestination(icon: Icon(Icons.group), label: 'Participart'),
-          NavigationDestination(icon: Icon(Icons.play_arrow), label: 'Start'),
-          NavigationDestination(icon: Icon(Icons.list), label: 'result'),
-          
-          // NavigationDestination(
-          //   selectedIcon: Icon(Icons.list),
-          //   icon: Icon(Icons.list),
-          //   label: 'Result',
-          // ),
-        ],
       ),
       body: Column(
         children: [
