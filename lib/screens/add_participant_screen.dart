@@ -49,58 +49,81 @@ class _AddParticipantScreenState extends State<AddParticipantScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'BIB',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          _isEditing ? 'Edit' : 'Add',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+          'BIB',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-          const SizedBox(height: 8),
-          _buildTextField(_bibController, 'Enter BIB number'),
-          
-          const SizedBox(height: 24),
-          const Text(
-            'Name',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(_bibController, 'Enter BIB number'),
+              const SizedBox(height: 24),
+              const Text(
+          'Name',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-          const SizedBox(height: 8),
-          _buildTextField(_nameController, 'Enter name'),
-          
-          const SizedBox(height: 24),
-          const Text(
-            'Age',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(_nameController, 'Enter name'),
+              const SizedBox(height: 24),
+              const Text(
+          'Age',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-          const SizedBox(height: 8),
-          _buildTextField(_ageController, 'Enter age', keyboardType: TextInputType.number),
-          
-          const Spacer(),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: _saveParticipant,
-              child: Text(_isEditing ? 'Update' : 'Save'),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              ),
+              const SizedBox(height: 8),
+              _buildTextField(_ageController, 'Enter age',
+            keyboardType: TextInputType.number),
+              const SizedBox(height: 250),
+            ],
+          ),
+        ),
+        ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SizedBox(
+          width: double.infinity,
+          height: 60, // Match the height of the Start button
+          child: ElevatedButton(
+            onPressed: _saveParticipant,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 88, 86, 214),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12), // Match the rounded corners
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 16), // For better alignment
+            ),
+            child: Text(
+              _isEditing ? 'Update' : 'Save',
+              style: const TextStyle(
+                fontSize: 20, // Match the font size
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -158,8 +181,9 @@ class _AddParticipantScreenState extends State<AddParticipantScreen> {
       age: age,
     );
 
-    final participantProvider = Provider.of<ParticipantProvider>(context, listen: false);
-    
+    final participantProvider =
+        Provider.of<ParticipantProvider>(context, listen: false);
+
     if (_isEditing && widget.participantIndex != null) {
       // Update existing participant
       participantProvider.updateParticipant(widget.participantIndex!, participant);

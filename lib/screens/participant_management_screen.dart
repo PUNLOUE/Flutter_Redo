@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import '../widgets/race_navigation_bar.dart';
 import 'participant_list_screen.dart';
 import 'add_participant_screen.dart';
@@ -52,54 +52,75 @@ class _ParticipantManagementScreenState extends State<ParticipantManagementScree
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () {
+                                child: GestureDetector(
+                                  onTap: () {
                                     setState(() {
                                       _selectedSegmentIndex = 0;
                                     });
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _selectedSegmentIndex == 0
-                                        ? const Color(0xFF5E5CE6)
-                                        : const Color(0xFFEFF1F5),
-                                    foregroundColor: _selectedSegmentIndex == 0
-                                        ? Colors.white
-                                        : const Color(0xFF5E5CE6),
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        bottomLeft: Radius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: _selectedSegmentIndex == 0
+                                              ? const Color(0xFF5E5CE6)
+                                              : Colors.transparent,
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Participant List',
+                                        style: TextStyle(
+                                          color: _selectedSegmentIndex == 0
+                                              ? const Color(0xFF5E5CE6)
+                                              : Colors.black,
+                                          fontWeight: _selectedSegmentIndex == 0
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  child: const Text('Participant List'),
                                 ),
                               ),
                               Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () {
+                                child: GestureDetector(
+                                  onTap: () {
                                     setState(() {
                                       _selectedSegmentIndex = 1;
                                     });
                                   },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _selectedSegmentIndex == 1
-                                        ? const Color(0xFF5E5CE6)
-                                        : const Color(0xFFEFF1F5),
-                                    foregroundColor: _selectedSegmentIndex == 1
-                                        ? Colors.white
-                                        : const Color(0xFF5E5CE6),
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(8),
-                                        bottomRight: Radius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: _selectedSegmentIndex == 1
+                                              ? const Color(0xFF5E5CE6)
+                                              : Colors.transparent,
+                                          width: 2.0,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Add Participant',
+                                        style: TextStyle(
+                                          color: _selectedSegmentIndex == 1
+                                              ? const Color(0xFF5E5CE6)
+                                              : Colors.black,
+                                          fontWeight: _selectedSegmentIndex == 1
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  child: const Text('Add Participant'),
                                 ),
                               ),
                             ],
@@ -108,9 +129,7 @@ class _ParticipantManagementScreenState extends State<ParticipantManagementScree
                         Expanded(
                           child: _selectedSegmentIndex == 0
                               ? const ParticipantListScreen()
-                              : AddParticipantScreen(
-                                  onSubmit: _onParticipantAdded,
-                                ),
+                              : AddParticipantScreen(onSubmit: _onParticipantAdded),
                         ),
                       ],
                     )

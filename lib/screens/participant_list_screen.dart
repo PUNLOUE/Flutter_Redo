@@ -1,7 +1,5 @@
-// lib/screens/participant_list_screen.dart
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../models/item_model.dart';
 import '../providers/item_provider.dart';
 import 'add_participant_screen.dart';
@@ -14,66 +12,15 @@ class ParticipantListScreen extends StatelessWidget {
     return Consumer<ParticipantProvider>(
       builder: (context, participantProvider, child) {
         final participants = participantProvider.participants;
-
         return Column(
           children: [
-            // Header
             Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey, width: 0.5),
-                ),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'BIB',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF5E5CE6),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Name',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF5E5CE6),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          'Age',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF5E5CE6),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 80), // Space for action buttons
-                  ],
-                ),
+              padding: const EdgeInsets.all(16.0),
+              child: const Text(
+                'Participants',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-
-            // List of participants
             Expanded(
               child: participants.isEmpty
                   ? const Center(child: Text('No participants yet'))
@@ -82,46 +29,41 @@ class ParticipantListScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final participant = participants[index];
                         return Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 4.0, horizontal: 16.0),
+                          padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Colors.grey.shade300, width: 0.5),
-                            ),
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(participant.bib),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(participant.name),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(participant.age.toString()),
+                              Flexible(
+                                flex: 3,
+                                child: Text(
+                                  '${participant.bib} - ${participant.name}, ${participant.age}',
+                                  style: const TextStyle(fontSize: 16),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
                               ),
                               SizedBox(
-                                width: 80,
+                                width: 100,
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
+                                      icon: const Icon(Icons.edit,
+                                          color: Colors.blue, size: 20),
                                       onPressed: () {
-                                        _editParticipant(context, index, participant);
+                                        _editParticipant(
+                                            context, index, participant);
                                       },
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red, size: 20),
                                       onPressed: () {
                                         _deleteParticipant(context, index);
                                       },
@@ -141,7 +83,8 @@ class ParticipantListScreen extends StatelessWidget {
     );
   }
 
-  void _editParticipant(BuildContext context, int index, Participant participant) {
+  void _editParticipant(
+      BuildContext context, int index, Participant participant) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -149,8 +92,7 @@ class ParticipantListScreen extends StatelessWidget {
           participant: participant,
           participantIndex: index,
           onSubmit: () {
-            // Return to the list screen
-            Navigator.pop(context);
+            Navigator.pop(context); // Return to the list after editing
           },
         ),
       ),
@@ -158,7 +100,6 @@ class ParticipantListScreen extends StatelessWidget {
   }
 
   void _deleteParticipant(BuildContext context, int index) {
-    // Show confirmation dialog
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
