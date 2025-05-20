@@ -1,8 +1,9 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:racing/screens/race_start_screen.dart';
+import 'package:racing/screens/result_screem.dart';
 import '../widgets/race_navigation_bar.dart';
 import 'participant_list_screen.dart';
 import 'add_participant_screen.dart';
-// import 'race_start_screen.dart';
 // import 'race_result_screen.dart';
 
 class ParticipantManagementScreen extends StatefulWidget {
@@ -137,7 +138,9 @@ class _ParticipantManagementScreenState extends State<ParticipantManagementScree
                   // : _selectedNavIndex == 1
                   //     ? RaceStartScreen()
                   //     : RaceResultScreen(),
-                  : const Center(child: Text('Other screens go here')),
+                  :  _selectedNavIndex == 1
+                  ? const RaceStartScreen()
+                  : const RaceResultScreen(),
             ),
           ),
         ],
